@@ -25,6 +25,7 @@
 module ProgramCounter(
     input clk,
     input reset,
+    input halt,
     input [2:0] pcOp,
     input [31:0] pcImm,
     input [31:0] pcAbsolute,
@@ -38,7 +39,7 @@ module ProgramCounter(
     always @(posedge clk) begin
         if (reset) begin
             PC <= 0;
-        end else begin
+        end else if (!halt) begin
             case (pcOp)
                 PC_NEXT: PC <= PCplus4;
                 PC_REL: PC <= PCplusImm;

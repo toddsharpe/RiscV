@@ -96,7 +96,7 @@ module Decoder(
             3'b111: AluOpSelect = ALU_AND;
             endcase
         end
-    endfunction : AluOpSelect;
+    endfunction
 
     // The ALU
     //isSub: funct7[5] selects add/sub, instr[5] ensures this is unsigned (vs ADDI which is signed).

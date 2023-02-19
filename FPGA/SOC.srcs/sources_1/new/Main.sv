@@ -22,11 +22,21 @@
 
 module Main(
     input clk,
-    input sw15
-    );
+    input sw15,
+    output [3:0] an,
+    output [6:0] seg
+);
 
+    //Peripherals
+    wire [15:0] led_out;
+
+    //SoC
     SoC soc(
         .clk(clk),
-        .reset(sw15)
+        .reset(sw15),
+        .led_out(led_out)
     );
+
+    //LED Peripheral
+    LedSegmentsController segDisplay(.clk(clk), .value(led_out), .an(an), .seg(seg));
 endmodule

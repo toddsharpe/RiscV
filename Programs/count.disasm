@@ -1,0 +1,30 @@
+
+count.elf:     file format elf32-littleriscv
+
+
+Disassembly of section everything:
+
+00000000 <_boot>:
+   0:	000000b3          	add	ra,zero,zero
+   4:	02000113          	li	sp,32
+
+00000008 <loop>:
+   8:	00209063          	bne	ra,sp,8 <loop>
+   c:	00100073          	ebreak
+  10:	0000                	unimp
+  12:	0000                	unimp
+  14:	2341                	jal	594 <loop+0x58c>
+  16:	0000                	unimp
+  18:	7200                	flw	fs0,32(a2)
+  1a:	7369                	lui	t1,0xffffa
+  1c:	01007663          	bgeu	zero,a6,28 <loop+0x20>
+  20:	0019                	c.nop	6
+  22:	0000                	unimp
+  24:	7205                	lui	tp,0xfffe1
+  26:	3376                	fld	ft6,376(sp)
+  28:	6932                	flw	fs2,12(sp)
+  2a:	7032                	flw	ft0,44(sp)
+  2c:	5f30                	lw	a2,120(a4)
+  2e:	326d                	jal	fffff9d8 <loop+0xfffff9d0>
+  30:	3070                	fld	fa2,224(s0)
+  32:	615f 7032 0030      	0x307032615f

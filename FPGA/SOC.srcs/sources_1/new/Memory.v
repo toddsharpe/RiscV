@@ -34,14 +34,14 @@ module Memory(
 
     initial begin
         $display("Loading RAM.");
-        $readmemh("add.mem", MEM);
+        $readmemh("count.mem", MEM);
     end
 
     wire [29:0] word_addr = mem_addr[31:2];
 
     always @(posedge clk) begin
         if (reset) begin
-            $readmemh("fib.mem", MEM);
+            $readmemh("count.mem", MEM);
         end else begin
             if(mem_rstrb) mem_rdata <= MEM[word_addr];
             if(mem_wmask[0]) MEM[word_addr][ 7:0 ] <= mem_wdata[ 7:0 ];

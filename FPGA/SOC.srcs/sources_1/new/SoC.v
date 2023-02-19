@@ -22,7 +22,8 @@
 
 module SoC(
     input clk,
-    input reset
+    input reset,
+    output [15:0] led_out
 );
 
     wire [31:0] mem_addr;
@@ -53,4 +54,6 @@ module SoC(
         .mem_wmask(mem_wmask)
     );
 
+    //TODO: connect perhipheral to memory controller
+    assign led_out = 16'hFF00;
 endmodule
