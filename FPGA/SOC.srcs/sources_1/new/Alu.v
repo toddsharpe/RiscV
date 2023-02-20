@@ -23,7 +23,7 @@
 `include "DEFINES.vinc"
 
 module ALU(
-    input [4:0] op,
+    input [3:0] op,
     input [31:0] aluIn1,
     input [31:0] aluIn2,
     output reg [31:0] aluOut,

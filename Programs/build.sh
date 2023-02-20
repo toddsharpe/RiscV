@@ -17,5 +17,6 @@ $LD -march=rv32imac -mabi=ilp32 -o count.elf -T count.ld -m elf32lriscv -nostdli
 $OBJDUMP -S --disassemble count.elf > count.disasm
 
 # Hex and Bin
-$OBJCOPY -O ihex count.elf count.mem
+#$OBJCOPY -O ihex count.elf count.mem
 $OBJCOPY -O binary count.elf count.bin
+hexdump -e '"%08x\n"' count.bin > count.mem

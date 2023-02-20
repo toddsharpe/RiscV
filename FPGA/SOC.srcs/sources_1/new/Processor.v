@@ -22,6 +22,7 @@
 
 module Processor(
     input clk,
+    input cpu_clk,
     input reset,
     output [31:0] mem_addr,
     input [31:0] mem_rdata,
@@ -56,6 +57,8 @@ module Processor(
     //Selected Registers
     wire [31:0] rd1;
     wire [31:0] rd2;
+    wire writebackEn;
+    wire [31:0] writeback;
 
     //Alu signals
     wire [3:0] aluOp;
@@ -69,23 +72,23 @@ module Processor(
     wire [31:0] aluOut;
 
     //PC calculation
+    wire pcInc;
     wire [31:0] pcImm;
     wire [2:0] branchOp;
 
     //Register file
     RegisterFile registers(
         .clk(clk),
+        .cpu_clk(cpu_clk),
         .reset(reset),
         .rs1Id(rs1Id),
         .rs2Id(rs2Id),
         .rdId(rdId),
-        .writeback(),
-        .DATA(),
+        .writeback(writebackEn),
+        .DATA(writeback),
         .rd1(rd1),
         .rd2(rd2)
     );
-    
-    //Register file_vio
 
     //Decoder
     Decoder decoder(
@@ -127,9 +130,10 @@ module Processor(
                                                    isJALR ? PC_ABS :
                                                    PC_NEXT;
     ProgramCounter pc(
-        .clk(clk),
+        //.clk(clk),
+        .cpu_clk(cpu_clk),
         .reset(reset),
-        .halt(isSYSTEM),
+        .inc(pcInc),
         .pcOp(pcOp),
         .pcImm(pcImm),
         .pcAbsolute({aluOut[31:1],1'b0}),
@@ -156,7 +160,7 @@ module Processor(
     localparam EXECUTE     = 3;
     reg [2:0] state = FETCH_INSTR;
 
-    always @(posedge clk) begin
+    always @(posedge cpu_clk) begin
         if(reset) begin
             state <= FETCH_INSTR;
         end else begin
@@ -179,4 +183,42 @@ module Processor(
     assign mem_rstrb = (state == FETCH_INSTR);
     assign mem_wdata = {32'h00000000};
     assign mem_wmask = 4'b0000;
+    assign pcInc = (state == EXECUTE);
+    assign writeback = aluOut; 
+    assign writeBackEn = (state == EXECUTE && (isALUreg || isALUimm));  
+
+    //VIO
+    processor_vio processor_vio (
+        .clk(clk),
+        .probe_in0(state),
+        .probe_in1(PC),
+        .probe_in2(instr),
+        .probe_in3(mem_addr),
+        .probe_in4(mem_rstrb),
+        .probe_in5(mem_rdata)
+    );
+
+    alu_vio alu_vio (
+        .clk(clk),
+        .probe_in0(aluOp),
+        .probe_in1(aluIn1),
+        .probe_in2(aluIn2),
+        .probe_in3(aluOut),
+        .probe_in4(EQ),
+        .probe_in5(LT),
+        .probe_in6(LTU)
+    );
+
+    decoder_vio decoder_vio (
+        .clk(clk),
+        .probe_in0(rs1Id),
+        .probe_in1(rs2Id),
+        .probe_in2(rdId),
+        .probe_in3(aluOp),
+        .probe_in4(alu2Sel),
+        .probe_in5(alu2Imm),
+        .probe_in6(pcImm),
+        .probe_in7(branchOp)
+    );
+
 endmodule

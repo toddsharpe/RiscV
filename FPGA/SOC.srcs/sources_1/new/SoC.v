@@ -22,6 +22,7 @@
 
 module SoC(
     input clk,
+    input cpu_clk,
     input reset,
     output [15:0] led_out
 );
@@ -36,6 +37,7 @@ module SoC(
     
     Memory memory(
         .clk(clk),
+        .cpu_clk(cpu_clk),
         .reset(reset),
         .mem_addr(mem_addr),
         .mem_rdata(mem_rdata),
@@ -46,6 +48,7 @@ module SoC(
 
     Processor processor(
         .clk(clk),
+        .cpu_clk(cpu_clk),
         .reset(reset),
         .mem_addr(mem_addr),
         .mem_rdata(mem_rdata),

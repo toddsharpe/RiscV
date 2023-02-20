@@ -22,6 +22,7 @@
 
 module Main(
     input clk,
+    input btnC,
     input sw15,
     output [3:0] an,
     output [6:0] seg
@@ -30,9 +31,18 @@ module Main(
     //Peripherals
     wire [15:0] led_out;
 
+    //Manual clock for CPU
+    wire manual_clk;
+    button_pressed btnC_pressed(
+        .clk(clk),
+        .button(btnC),
+        .pressed(manual_clk)
+    );
+
     //SoC
     SoC soc(
         .clk(clk),
+        .cpu_clk(manual_clk),
         .reset(sw15),
         .led_out(led_out)
     );

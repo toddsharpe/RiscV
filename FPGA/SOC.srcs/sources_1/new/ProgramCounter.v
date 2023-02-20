@@ -23,9 +23,10 @@
 `include "DEFINES.vinc"
 
 module ProgramCounter(
-    input clk,
+    //input clk,
+    input cpu_clk,
     input reset,
-    input halt,
+    input inc,
     input [2:0] pcOp,
     input [31:0] pcImm,
     input [31:0] pcAbsolute,
@@ -36,10 +37,10 @@ module ProgramCounter(
     wire [31:0] PCplusImm = PC + pcImm;
     wire [31:0] PCplus4 = PC + 4;
 
-    always @(posedge clk) begin
+    always @(posedge cpu_clk) begin
         if (reset) begin
             PC <= 0;
-        end else if (!halt) begin
+        end else if (inc) begin
             case (pcOp)
                 PC_NEXT: PC <= PCplus4;
                 PC_REL: PC <= PCplusImm;
