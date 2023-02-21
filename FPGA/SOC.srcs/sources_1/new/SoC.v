@@ -35,11 +35,24 @@ module SoC(
     wire [3:0]  mem_wmask;
 
     //TODO: Memory controller for memorymapped peripherals (LEDs, switches, etc.)
+    wire isGpio1 = mem_addr == 1024;
+    wire isMemory = mem_addr < 1024;
+
+    wire [15:0] gpioData = mem_wdata[15:0];
+    GpioPort gpio1(
+        .clk(clk),
+        .cpu_clk(cpu_clk),
+        .reset(reset),
+        .enable(isGpio1),
+        .data_in(gpioData),
+        .data_out(led_out)
+    );
 
     Memory memory(
         //.clk(clk),
         .cpu_clk(cpu_clk),
         .reset(reset),
+        .enable(isMemory),
         .mem_addr(mem_addr),
         .mem_rdata(mem_rdata),
         .mem_rstrb(mem_rstrb),
@@ -59,7 +72,4 @@ module SoC(
         .mem_wmask(mem_wmask)
     );
 
-    //TODO: connect perhipheral to memory controller
-    //assign led_out = 16'hFF00;
-    assign led_out = mem_addr[15:0];
 endmodule

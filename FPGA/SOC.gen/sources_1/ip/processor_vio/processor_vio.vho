@@ -61,7 +61,9 @@ COMPONENT processor_vio
     probe_in4 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     probe_in5 : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     probe_in6 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-    probe_in7 : IN STD_LOGIC_VECTOR(0 DOWNTO 0) 
+    probe_in7 : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    probe_in8 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    probe_in9 : IN STD_LOGIC_VECTOR(3 DOWNTO 0) 
   );
 END COMPONENT;
 -- COMP_TAG_END ------ End COMPONENT Declaration ------------
@@ -80,7 +82,9 @@ your_instance_name : processor_vio
     probe_in4 => probe_in4,
     probe_in5 => probe_in5,
     probe_in6 => probe_in6,
-    probe_in7 => probe_in7
+    probe_in7 => probe_in7,
+    probe_in8 => probe_in8,
+    probe_in9 => probe_in9
   );
 -- INST_TAG_END ------ End INSTANTIATION Template ---------
 

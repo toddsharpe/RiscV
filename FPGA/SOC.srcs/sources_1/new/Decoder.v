@@ -39,6 +39,9 @@ module Decoder(
     output [31:0] pcImm,
     output [2:0] branchOp,
 
+    //Store
+    output [31:0] storeImm,
+
     //Control Signals
     output isLUI,
     output isAUIPC,
@@ -115,5 +118,6 @@ module Decoder(
                                   Bimm[31:0] );
     assign branchOp = funct3;
     
-
+    //Store
+    assign storeImm = Simm;
 endmodule

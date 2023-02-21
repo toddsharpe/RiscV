@@ -29,8 +29,8 @@ module RegisterFile(
     input [4:0] rdId,
     input latch,
     input [31:0] dataIn,
-    output [31:0] rd1,
-    output [31:0] rd2
+    output [31:0] rs1,
+    output [31:0] rs2
 );
 
     integer i;
@@ -58,8 +58,8 @@ module RegisterFile(
         end
     end
 
-    assign rd1 = REGISTERS[rs1Id];
-    assign rd2 = REGISTERS[rs2Id];
+    assign rs1 = REGISTERS[rs1Id];
+    assign rs2 = REGISTERS[rs2Id];
 
     //VIO
     registerfile_vio registerfile_vio (

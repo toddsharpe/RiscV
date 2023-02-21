@@ -56,8 +56,8 @@ module Processor(
     wire [4:0] rdId;
 
     //Selected Registers
-    wire [31:0] rd1;
-    wire [31:0] rd2;
+    wire [31:0] rs1;
+    wire [31:0] rs2;
     wire regLatch;
     wire [31:0] regData;
 
@@ -77,6 +77,9 @@ module Processor(
     wire [31:0] pcImm;
     wire [2:0] branchOp;
 
+    //Store signals
+    wire [31:0] storeImm;
+
     //Register file
     RegisterFile registers(
         .clk(clk),
@@ -87,8 +90,8 @@ module Processor(
         .rdId(rdId),
         .latch(regLatch),
         .dataIn(regData),
-        .rd1(rd1),
-        .rd2(rd2)
+        .rs1(rs1),
+        .rs2(rs2)
     );
 
     //Decoder
@@ -103,6 +106,8 @@ module Processor(
 
         .pcImm(pcImm),
         .branchOp(branchOp),
+
+        .storeImm(storeImm),
 
         .isLUI(isLUI),
         .isAUIPC(isAUIPC),
@@ -176,8 +181,8 @@ module Processor(
     );
 
     //ALU
-    assign aluIn1 = rd1;
-    assign aluIn2 = alu2Sel ? rd2 : alu2Imm;
+    assign aluIn1 = rs1;
+    assign aluIn2 = alu2Sel ? rs2 : alu2Imm;
     ALU alu(
         .op(aluOp),
         .aluIn1(aluIn1),
@@ -200,11 +205,39 @@ module Processor(
         .probe_in6(LTU)  // input wire [0 : 0] probe_in6
     );
 
+    wire mem_byteAccess     = branchOp[1:0] == 2'b00;
+    wire mem_halfwordAccess = branchOp[1:0] == 2'b01;
+
+    //Stores
+    wire [31:0] loadstore_addr = rs1 + storeImm;
+    assign mem_wdata[ 7: 0] = rs2[7:0];
+    assign mem_wdata[15: 8] = loadstore_addr[0] ? rs2[7:0]  : rs2[15: 8];
+    assign mem_wdata[23:16] = loadstore_addr[1] ? rs2[7:0]  : rs2[23:16];
+    assign mem_wdata[31:24] = loadstore_addr[0] ? rs2[7:0]  : loadstore_addr[1] ? rs2[15:8] : rs2[31:24];
+
+    //
+    // The memory write mask:
+   //    1111                     if writing a word
+   //    0011 or 1100             if writing a halfword
+   //                                (depending on loadstore_addr[1])
+   //    0001, 0010, 0100 or 1000 if writing a byte
+   //                                (depending on loadstore_addr[1:0])
+
+   wire [3:0] STORE_wmask =
+	      mem_byteAccess      ?
+	            (loadstore_addr[1] ?
+		          (loadstore_addr[0] ? 4'b1000 : 4'b0100) :
+		          (loadstore_addr[0] ? 4'b0010 : 4'b0001)
+                    ) :
+	      mem_halfwordAccess ?
+	            (loadstore_addr[1] ? 4'b1100 : 4'b0011) :
+              4'b1111;
+
     //State machine
     localparam FETCH_INSTR = 0;
     localparam WAIT_INSTR  = 1;
-    localparam FETCH_REGS  = 2;
-    localparam EXECUTE     = 3;
+    localparam EXECUTE     = 2;
+    localparam STORE       = 3;
     reg [2:0] state = FETCH_INSTR;
 
     always @(posedge cpu_clk) begin
@@ -220,16 +253,19 @@ module Processor(
                     state <= EXECUTE;
                 end
                 EXECUTE: begin
+                    state <= isStore ? STORE : FETCH_INSTR;
+                end
+                STORE: begin
                     state <= FETCH_INSTR;
                 end
             endcase
         end
     end
 
-    assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ? PC : {32'h00000000} ;
+    assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ? PC : loadstore_addr ;
     assign mem_rstrb = (state == FETCH_INSTR);
-    assign mem_wdata = {32'h00000000};
-    assign mem_wmask = 4'b0000;
+    assign mem_wmask = {4{(state == STORE)}} & STORE_wmask;
+
     assign pcInc = (state == EXECUTE);
     assign regLatch = (state == EXECUTE && (isALUreg || isALUimm));  
     assign regData = aluOut;
@@ -245,7 +281,9 @@ module Processor(
         .probe_in4(mem_addr),  // input wire [31 : 0] probe_in4
         .probe_in5(mem_rstrb),  // input wire [0 : 0] probe_in5
         .probe_in6(mem_rdata),  // input wire [31 : 0] probe_in6
-        .probe_in7(halt)  // input wire [0 : 0] probe_in7
+        .probe_in7(halt),  // input wire [0 : 0] probe_in7
+        .probe_in8(mem_wdata),  // input wire [31 : 0] probe_in8
+        .probe_in9(mem_wmask)  // input wire [3 : 0] probe_in9
     );
 
 endmodule

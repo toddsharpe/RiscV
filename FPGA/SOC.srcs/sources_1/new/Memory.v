@@ -24,6 +24,7 @@ module Memory(
     //input clk,
     input cpu_clk,
     input reset,
+    input enable,
     input [31:0] mem_addr,
     output reg [31:0] mem_rdata,
     input mem_rstrb,
@@ -41,9 +42,12 @@ module Memory(
     wire [29:0] word_addr = mem_addr[31:2];
 
     always @(posedge cpu_clk) begin
-        if (reset) begin
+        if (reset)
+        begin
             $readmemh("count.mem", MEM);
-        end else begin
+        end
+        else if (enable)
+        begin
             if(mem_rstrb) mem_rdata <= MEM[word_addr];
             if(mem_wmask[0]) MEM[word_addr][ 7:0 ] <= mem_wdata[ 7:0 ];
             if(mem_wmask[1]) MEM[word_addr][15:8 ] <= mem_wdata[15:8 ];

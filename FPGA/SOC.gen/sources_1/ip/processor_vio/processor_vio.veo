@@ -63,7 +63,9 @@ processor_vio your_instance_name (
   .probe_in4(probe_in4),  // input wire [31 : 0] probe_in4
   .probe_in5(probe_in5),  // input wire [0 : 0] probe_in5
   .probe_in6(probe_in6),  // input wire [31 : 0] probe_in6
-  .probe_in7(probe_in7)  // input wire [0 : 0] probe_in7
+  .probe_in7(probe_in7),  // input wire [0 : 0] probe_in7
+  .probe_in8(probe_in8),  // input wire [31 : 0] probe_in8
+  .probe_in9(probe_in9)  // input wire [3 : 0] probe_in9
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------
 
