@@ -54,14 +54,15 @@
 COMPONENT decoder_vio
   PORT (
     clk : IN STD_LOGIC;
-    probe_in0 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+    probe_in0 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     probe_in1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
     probe_in2 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-    probe_in3 : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-    probe_in4 : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    probe_in5 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    probe_in3 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+    probe_in4 : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+    probe_in5 : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     probe_in6 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-    probe_in7 : IN STD_LOGIC_VECTOR(2 DOWNTO 0) 
+    probe_in7 : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    probe_in8 : IN STD_LOGIC_VECTOR(2 DOWNTO 0) 
   );
 END COMPONENT;
 -- COMP_TAG_END ------ End COMPONENT Declaration ------------
@@ -80,7 +81,8 @@ your_instance_name : decoder_vio
     probe_in4 => probe_in4,
     probe_in5 => probe_in5,
     probe_in6 => probe_in6,
-    probe_in7 => probe_in7
+    probe_in7 => probe_in7,
+    probe_in8 => probe_in8
   );
 -- INST_TAG_END ------ End INSTANTIATION Template ---------
 

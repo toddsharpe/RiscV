@@ -24,6 +24,7 @@ module Processor(
     input clk,
     input cpu_clk,
     input reset,
+    output halt,
     output [31:0] mem_addr,
     input [31:0] mem_rdata,
     output mem_rstrb,
@@ -57,8 +58,8 @@ module Processor(
     //Selected Registers
     wire [31:0] rd1;
     wire [31:0] rd2;
-    wire writebackEn;
-    wire [31:0] writeback;
+    wire regLatch;
+    wire [31:0] regData;
 
     //Alu signals
     wire [3:0] aluOp;
@@ -84,8 +85,8 @@ module Processor(
         .rs1Id(rs1Id),
         .rs2Id(rs2Id),
         .rdId(rdId),
-        .writeback(writebackEn),
-        .DATA(writeback),
+        .latch(regLatch),
+        .dataIn(regData),
         .rd1(rd1),
         .rd2(rd2)
     );
@@ -115,6 +116,20 @@ module Processor(
         .isSYSTEM(isSYSTEM)
     );
 
+    //Decoder VIO
+    decoder_vio decoder_vio (
+        .clk(clk),              // input wire clk
+        .probe_in0(instr),  // input wire [31 : 0] probe_in0
+        .probe_in1(rs1Id),  // input wire [4 : 0] probe_in1
+        .probe_in2(rs2Id),  // input wire [4 : 0] probe_in2
+        .probe_in3(rdId),  // input wire [4 : 0] probe_in3
+        .probe_in4(aluOp),  // input wire [3 : 0] probe_in4
+        .probe_in5(alu2Sel),  // input wire [0 : 0] probe_in5
+        .probe_in6(alu2Imm),  // input wire [31 : 0] probe_in6
+        .probe_in7(pcImm),  // input wire [31 : 0] probe_in7
+        .probe_in8(branchOp)  // input wire [2 : 0] probe_in8
+    );
+
     //Branch control
     wire takeBranch;
     BranchCalc branch(
@@ -125,10 +140,20 @@ module Processor(
         .takeBranch(takeBranch)
     );
 
+    branchcalc_vio branchcalc_vio (
+        .clk(clk),              // input wire clk
+        .probe_in0(branchOp),  // input wire [2 : 0] probe_in0
+        .probe_in1(EQ),  // input wire [0 : 0] probe_in1
+        .probe_in2(LT),  // input wire [0 : 0] probe_in2
+        .probe_in3(LTU),  // input wire [0 : 0] probe_in3
+        .probe_in4(takeBranch)  // input wire [0 : 0] probe_in4
+    );
+
     //Program counter
     wire [2:0] pcOp = ((isBranch && takeBranch) || isJAL) ? PC_REL :
                                                    isJALR ? PC_ABS :
                                                    PC_NEXT;
+    wire [31:0] pcAbsolute = {aluOut[31:1],1'b0};
     ProgramCounter pc(
         //.clk(clk),
         .cpu_clk(cpu_clk),
@@ -136,8 +161,18 @@ module Processor(
         .inc(pcInc),
         .pcOp(pcOp),
         .pcImm(pcImm),
-        .pcAbsolute({aluOut[31:1],1'b0}),
+        .pcAbsolute(pcAbsolute),
         .PC(PC)
+    );
+
+    //Program counter VIO
+    programcounter_vio programcounter_vio (
+        .clk(clk),              // input wire clk
+        .probe_in0(pcInc),  // input wire [0 : 0] probe_in0
+        .probe_in1(pcOp),  // input wire [2 : 0] probe_in1
+        .probe_in2(pcImm),  // input wire [31 : 0] probe_in2
+        .probe_in3(pcAbsolute),  // input wire [31 : 0] probe_in3
+        .probe_in4(PC)  // input wire [31 : 0] probe_in4
     );
 
     //ALU
@@ -151,6 +186,18 @@ module Processor(
         .EQ(EQ),
         .LT(LT),
         .LTU(LTU)
+    );
+
+    //ALU VIO
+    alu_vio alu_vio (
+        .clk(clk),              // input wire clk
+        .probe_in0(aluOp),  // input wire [3 : 0] probe_in0
+        .probe_in1(aluIn1),  // input wire [31 : 0] probe_in1
+        .probe_in2(aluIn2),  // input wire [31 : 0] probe_in2
+        .probe_in3(aluOut),  // input wire [31 : 0] probe_in3
+        .probe_in4(EQ),  // input wire [0 : 0] probe_in4
+        .probe_in5(LT),  // input wire [0 : 0] probe_in5
+        .probe_in6(LTU)  // input wire [0 : 0] probe_in6
     );
 
     //State machine
@@ -184,41 +231,21 @@ module Processor(
     assign mem_wdata = {32'h00000000};
     assign mem_wmask = 4'b0000;
     assign pcInc = (state == EXECUTE);
-    assign writeback = aluOut; 
-    assign writeBackEn = (state == EXECUTE && (isALUreg || isALUimm));  
+    assign regLatch = (state == EXECUTE && (isALUreg || isALUimm));  
+    assign regData = aluOut;
+    assign halt = isSYSTEM;
 
-    //VIO
+    //Processor VIO
     processor_vio processor_vio (
-        .clk(clk),
-        .probe_in0(state),
-        .probe_in1(PC),
-        .probe_in2(instr),
-        .probe_in3(mem_addr),
-        .probe_in4(mem_rstrb),
-        .probe_in5(mem_rdata)
-    );
-
-    alu_vio alu_vio (
-        .clk(clk),
-        .probe_in0(aluOp),
-        .probe_in1(aluIn1),
-        .probe_in2(aluIn2),
-        .probe_in3(aluOut),
-        .probe_in4(EQ),
-        .probe_in5(LT),
-        .probe_in6(LTU)
-    );
-
-    decoder_vio decoder_vio (
-        .clk(clk),
-        .probe_in0(rs1Id),
-        .probe_in1(rs2Id),
-        .probe_in2(rdId),
-        .probe_in3(aluOp),
-        .probe_in4(alu2Sel),
-        .probe_in5(alu2Imm),
-        .probe_in6(pcImm),
-        .probe_in7(branchOp)
+        .clk(clk),              // input wire clk
+        .probe_in0(state),  // input wire [2 : 0] probe_in0
+        .probe_in1(pcInc),  // input wire [0 : 0] probe_in1
+        .probe_in2(regData),  // input wire [31 : 0] probe_in2
+        .probe_in3(regLatch),  // input wire [0 : 0] probe_in3
+        .probe_in4(mem_addr),  // input wire [31 : 0] probe_in4
+        .probe_in5(mem_rstrb),  // input wire [0 : 0] probe_in5
+        .probe_in6(mem_rdata),  // input wire [31 : 0] probe_in6
+        .probe_in7(halt)  // input wire [0 : 0] probe_in7
     );
 
 endmodule

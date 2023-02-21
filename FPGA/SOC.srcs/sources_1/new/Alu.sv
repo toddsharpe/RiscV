@@ -43,18 +43,23 @@ module ALU(
     //110: OR,ORI
     //111: AND,ANDI
 
-    always @(*) begin
+    wire [32:0] aluMinus = {1'b1, ~aluIn2} + {1'b0,aluIn1} + 33'b1;
+    assign LT  = (aluIn1[31] ^ aluIn2[31]) ? aluIn1[31] : aluMinus[32];
+    assign LTU = aluMinus[32];
+    assign EQ  = (aluMinus[31:0] == 0);
+
+    always_comb
         case(op)
             ALU_ADD:
                 aluOut <= aluIn1 + aluIn2;
             ALU_SUB:
-                aluOut <= aluIn1 - aluIn2;
+                aluOut <= aluMinus;
             ALU_SLL:
                 aluOut <= aluIn1 << aluIn2;
             ALU_SLT:
-                aluOut <= $signed(aluIn1) < $signed(aluIn2);
+                aluOut <= {31'b0, LT};
             ALU_SLTU:
-                aluOut <= aluIn1 < aluIn2;
+                aluOut <= {31'b0, LTU};
             ALU_XOR:
                 aluOut <= aluIn1 ^ aluIn2;
             ALU_SRL:
@@ -68,9 +73,5 @@ module ALU(
             default:
                 aluOut <= 0;
         endcase
-   end
 
-    assign EQ = aluOut == 0;
-    assign LT = $signed(aluOut) < 0;
-    assign LTU = aluOut < 0;
 endmodule

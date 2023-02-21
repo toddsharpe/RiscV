@@ -54,28 +54,17 @@
 // (in parentheses) to your own signal names.
 
 //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
-memory_vio your_instance_name (
-  .clk(clk),                // input wire clk
-  .probe_in0(probe_in0),    // input wire [31 : 0] probe_in0
-  .probe_in1(probe_in1),    // input wire [31 : 0] probe_in1
-  .probe_in2(probe_in2),    // input wire [31 : 0] probe_in2
-  .probe_in3(probe_in3),    // input wire [31 : 0] probe_in3
-  .probe_in4(probe_in4),    // input wire [31 : 0] probe_in4
-  .probe_in5(probe_in5),    // input wire [31 : 0] probe_in5
-  .probe_in6(probe_in6),    // input wire [31 : 0] probe_in6
-  .probe_in7(probe_in7),    // input wire [31 : 0] probe_in7
-  .probe_in8(probe_in8),    // input wire [31 : 0] probe_in8
-  .probe_in9(probe_in9),    // input wire [31 : 0] probe_in9
-  .probe_in10(probe_in10),  // input wire [31 : 0] probe_in10
-  .probe_in11(probe_in11),  // input wire [31 : 0] probe_in11
-  .probe_in12(probe_in12),  // input wire [31 : 0] probe_in12
-  .probe_in13(probe_in13),  // input wire [31 : 0] probe_in13
-  .probe_in14(probe_in14),  // input wire [31 : 0] probe_in14
-  .probe_in15(probe_in15)  // input wire [31 : 0] probe_in15
+branchcalc_vio your_instance_name (
+  .clk(clk),              // input wire clk
+  .probe_in0(probe_in0),  // input wire [2 : 0] probe_in0
+  .probe_in1(probe_in1),  // input wire [0 : 0] probe_in1
+  .probe_in2(probe_in2),  // input wire [0 : 0] probe_in2
+  .probe_in3(probe_in3),  // input wire [0 : 0] probe_in3
+  .probe_in4(probe_in4)  // input wire [0 : 0] probe_in4
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------
 
-// You must compile the wrapper file memory_vio.v when simulating
-// the core, memory_vio. When compiling the wrapper file, be sure to
+// You must compile the wrapper file branchcalc_vio.v when simulating
+// the core, branchcalc_vio. When compiling the wrapper file, be sure to
 // reference the Verilog simulation library.
 

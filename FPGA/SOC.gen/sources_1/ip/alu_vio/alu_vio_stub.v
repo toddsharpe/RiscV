@@ -1,10 +1,10 @@
 // Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-// Date        : Mon Feb 20 11:18:45 2023
+// Date        : Sun Feb 19 22:39:30 2023
 // Host        : tsharpe-5950x running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode synth_stub
-//               c:/Users/todds/GitHub/toddsharpe/RiscV/FPGA/SOC.gen/sources_1/ip/alu_vio/alu_vio_stub.v
+// Command     : write_verilog -force -mode synth_stub -rename_top alu_vio -prefix
+//               alu_vio_ alu_vio_stub.v
 // Design      : alu_vio
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a35tcpg236-1

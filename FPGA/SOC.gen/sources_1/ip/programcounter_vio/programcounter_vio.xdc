@@ -1,4 +1,4 @@
-# file: memory_vio.xdc
+# file: programcounter_vio.xdc
 #////////////////////////////////////////////////////////////////////////////
 #/$Date: 2012/02/06 10:34:16 $
 #/$RCSfile:  $
@@ -9,7 +9,7 @@
 #/ /___/  \  /    Vendor: Xilinx
 #/ \   \   \/     Version : 2.00
 #/  \   \         Application : VIO V2.00a
-#/  /   /         Filename : memory_vio.xdc
+#/  /   /         Filename : programcounter_vio.xdc
 #/ /___/   /\     
 #/ \   \  /  \ 
 #/  \___\/\___\

@@ -24,6 +24,7 @@ module SoC(
     input clk,
     input cpu_clk,
     input reset,
+    output halt,
     output [15:0] led_out
 );
 
@@ -34,9 +35,9 @@ module SoC(
     wire [3:0]  mem_wmask;
 
     //TODO: Memory controller for memorymapped peripherals (LEDs, switches, etc.)
-    
+
     Memory memory(
-        .clk(clk),
+        //.clk(clk),
         .cpu_clk(cpu_clk),
         .reset(reset),
         .mem_addr(mem_addr),
@@ -50,6 +51,7 @@ module SoC(
         .clk(clk),
         .cpu_clk(cpu_clk),
         .reset(reset),
+        .halt(halt),
         .mem_addr(mem_addr),
         .mem_rdata(mem_rdata),
         .mem_rstrb(mem_rstrb),
@@ -58,5 +60,6 @@ module SoC(
     );
 
     //TODO: connect perhipheral to memory controller
-    assign led_out = 16'hFF00;
+    //assign led_out = 16'hFF00;
+    assign led_out = mem_addr[15:0];
 endmodule

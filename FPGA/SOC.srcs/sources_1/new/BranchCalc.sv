@@ -20,6 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+`include "DEFINES.vinc"
+
 module BranchCalc(
     input [2:0] branchOp,
     input EQ,
@@ -29,16 +31,15 @@ module BranchCalc(
 );
 
     // The predicate for branch instructions
-    always @(*) begin
+    always_comb
         case(branchOp)
-            3'b000: takeBranch = EQ;
-            3'b001: takeBranch = !EQ;
-            3'b100: takeBranch = LT;
-            3'b101: takeBranch = !LT;
-            3'b110: takeBranch = LTU;
-            3'b111: takeBranch = !LTU;
-            default: takeBranch = 1'b0;
+            B_EQ: takeBranch <= EQ;
+            B_NE: takeBranch <= !EQ;
+            B_LT: takeBranch <= LT;
+            B_GE: takeBranch <= !LT;
+            B_LTU: takeBranch <= LTU;
+            B_GEU: takeBranch <= !LTU;
+            default: takeBranch <= 1'b0;
         endcase
-    end
 
 endmodule

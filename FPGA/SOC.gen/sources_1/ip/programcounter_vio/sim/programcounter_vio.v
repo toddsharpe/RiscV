@@ -46,29 +46,18 @@
 //
 // DO NOT MODIFY THIS FILE.
 `timescale 1ns / 1ps
-module memory_vio (
+module programcounter_vio (
 clk,
-probe_in0,probe_in1,probe_in2,probe_in3,probe_in4,probe_in5,probe_in6,probe_in7,probe_in8,probe_in9,probe_in10,probe_in11,probe_in12,probe_in13,probe_in14,probe_in15
+probe_in0,probe_in1,probe_in2,probe_in3,probe_in4
 
 );
 
 input clk;
-input [31 : 0] probe_in0;
-input [31 : 0] probe_in1;
+input [0 : 0] probe_in0;
+input [2 : 0] probe_in1;
 input [31 : 0] probe_in2;
 input [31 : 0] probe_in3;
 input [31 : 0] probe_in4;
-input [31 : 0] probe_in5;
-input [31 : 0] probe_in6;
-input [31 : 0] probe_in7;
-input [31 : 0] probe_in8;
-input [31 : 0] probe_in9;
-input [31 : 0] probe_in10;
-input [31 : 0] probe_in11;
-input [31 : 0] probe_in12;
-input [31 : 0] probe_in13;
-input [31 : 0] probe_in14;
-input [31 : 0] probe_in15;
 
 
 

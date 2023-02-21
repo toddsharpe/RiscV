@@ -5,14 +5,13 @@ count.elf:     file format elf32-littleriscv
 Disassembly of section everything:
 
 00000000 <_boot>:
-   0:	000000b3          	add	ra,zero,zero
+   0:	00000093          	li	ra,0
    4:	02000113          	li	sp,32
 
 00000008 <loop>:
-   8:	00209063          	bne	ra,sp,8 <loop>
-   c:	00100073          	ebreak
-  10:	0000                	unimp
-  12:	0000                	unimp
+   8:	00108093          	addi	ra,ra,1
+   c:	fe209ee3          	bne	ra,sp,8 <loop>
+  10:	00100073          	ebreak
   14:	2341                	jal	594 <loop+0x58c>
   16:	0000                	unimp
   18:	7200                	flw	fs0,32(a2)
