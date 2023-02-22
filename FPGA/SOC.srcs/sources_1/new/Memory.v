@@ -32,7 +32,7 @@ module Memory(
     input [3:0] mem_wmask
 );
 
-    reg [31:0] MEM [0:255];
+    reg [31:0] MEM [0:32767];
 
     initial begin
         $display("Loading RAM.");

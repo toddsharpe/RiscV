@@ -7,19 +7,23 @@ Disassembly of section everything:
 00000000 <_boot>:
    0:	00000093          	li	ra,0
    4:	02000113          	li	sp,32
-   8:	40000193          	li	gp,1024
+   8:	00000197          	auipc	gp,0x0
+   c:	0181a183          	lw	gp,24(gp) # 20 <GpioBase>
 
-0000000c <loop>:
-   c:	00108093          	addi	ra,ra,1
-  10:	0011a023          	sw	ra,0(gp)
-  14:	fe209ce3          	bne	ra,sp,c <loop>
-  18:	00100073          	ebreak
-	...
-  24:	2341                	jal	5a4 <loop+0x598>
+00000010 <loop>:
+  10:	00108093          	addi	ra,ra,1
+  14:	0011a023          	sw	ra,0(gp)
+  18:	fe209ce3          	bne	ra,sp,10 <loop>
+  1c:	00100073          	ebreak
+
+00000020 <GpioBase>:
+  20:	0400                	addi	s0,sp,512
+  22:	0000                	unimp
+  24:	2341                	jal	5a4 <GpioBase+0x584>
   26:	0000                	unimp
   28:	7200                	flw	fs0,32(a2)
   2a:	7369                	lui	t1,0xffffa
-  2c:	01007663          	bgeu	zero,a6,38 <loop+0x2c>
+  2c:	01007663          	bgeu	zero,a6,38 <GpioBase+0x18>
   30:	0019                	c.nop	6
   32:	0000                	unimp
   34:	7205                	lui	tp,0xfffe1
@@ -27,6 +31,6 @@ Disassembly of section everything:
   38:	6932                	flw	fs2,12(sp)
   3a:	7032                	flw	ft0,44(sp)
   3c:	5f30                	lw	a2,120(a4)
-  3e:	326d                	jal	fffff9e8 <loop+0xfffff9dc>
+  3e:	326d                	jal	fffff9e8 <GpioBase+0xfffff9c8>
   40:	3070                	fld	fa2,224(s0)
   42:	615f 7032 0030      	0x307032615f

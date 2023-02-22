@@ -208,6 +208,21 @@ module Processor(
     wire mem_byteAccess     = branchOp[1:0] == 2'b00;
     wire mem_halfwordAccess = branchOp[1:0] == 2'b01;
 
+    //Load
+    wire [15:0] LOAD_halfword =
+	       loadstore_addr[1] ? mem_rdata[31:16] : mem_rdata[15:0];
+
+   wire  [7:0] LOAD_byte =
+	       loadstore_addr[0] ? LOAD_halfword[15:8] : LOAD_halfword[7:0];
+
+wire LOAD_sign =
+	!branchOp[2] & (mem_byteAccess ? LOAD_byte[7] : LOAD_halfword[15]);
+
+   wire [31:0] LOAD_data =
+         mem_byteAccess ? {{24{LOAD_sign}},     LOAD_byte} :
+     mem_halfwordAccess ? {{16{LOAD_sign}}, LOAD_halfword} :
+                          mem_rdata ;
+
     //Stores
     wire [31:0] loadstore_addr = rs1 + storeImm;
     assign mem_wdata[ 7: 0] = rs2[7:0];
@@ -237,7 +252,9 @@ module Processor(
     localparam FETCH_INSTR = 0;
     localparam WAIT_INSTR  = 1;
     localparam EXECUTE     = 2;
-    localparam STORE       = 3;
+    localparam LOAD        = 3;
+   localparam WAIT_DATA   = 4;
+   localparam STORE       = 5;
     reg [2:0] state = FETCH_INSTR;
 
     always @(posedge cpu_clk) begin
@@ -253,7 +270,15 @@ module Processor(
                     state <= EXECUTE;
                 end
                 EXECUTE: begin
-                    state <= isStore ? STORE : FETCH_INSTR;
+                    state <= isLoad  ? LOAD  : 
+                            isStore ? STORE : 
+		                    FETCH_INSTR;
+                end
+                LOAD: begin
+                    state <= WAIT_DATA;
+                end
+                WAIT_DATA: begin
+                    state <= FETCH_INSTR;
                 end
                 STORE: begin
                     state <= FETCH_INSTR;
@@ -263,12 +288,21 @@ module Processor(
     end
 
     assign mem_addr = (state == WAIT_INSTR || state == FETCH_INSTR) ? PC : loadstore_addr ;
-    assign mem_rstrb = (state == FETCH_INSTR);
+    assign mem_rstrb = (state == FETCH_INSTR || state == LOAD);
     assign mem_wmask = {4{(state == STORE)}} & STORE_wmask;
 
     assign pcInc = (state == EXECUTE);
-    assign regLatch = (state == EXECUTE && (isALUreg || isALUimm));  
-    assign regData = aluOut;
+    assign regLatch = (state==EXECUTE && !isBranch && !isStore && !isLoad) ||
+			(state==WAIT_DATA);
+
+    wire [31:0] PCplusImm = PC + pcImm;
+    wire [31:0] PCplus4 = PC + 4;
+
+    assign regData = (isJAL || isJALR) ? PCplus4   :
+			      isLUI         ? Uimm      :
+			      isAUIPC       ? PCplusImm :
+			      isLoad        ? LOAD_data :
+			                      aluOut;
     assign halt = isSYSTEM;
 
     //Processor VIO

@@ -113,8 +113,8 @@ module Decoder(
     // An adder used to compute branch address, JAL address and AUIPC.
     // branch->PC+Bimm    AUIPC->PC+Uimm    JAL->PC+Jimm
     // Equivalent to PCplusImm = PC + (isJAL ? Jimm : isAUIPC ? Uimm : Bimm)
-    assign pcImm = (isJAL ? Jimm[31:0] :
-                        isAUIPC ? Uimm[31:0] :
+    assign pcImm = (instr[3] ? Jimm[31:0] :
+                        instr[4] ? Uimm[31:0] :
                                   Bimm[31:0] );
     assign branchOp = funct3;
     
