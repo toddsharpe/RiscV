@@ -49,7 +49,7 @@ module SoC(
     );
 
     Memory memory(
-        //.clk(clk),
+        .clk(clk),
         .cpu_clk(cpu_clk),
         .reset(reset),
         .enable(isMemory),
