@@ -6,7 +6,7 @@ Disassembly of section everything:
 
 00000000 <_boot>:
    0:	00000093          	li	ra,0
-   4:	02000113          	li	sp,32
+   4:	20000113          	li	sp,512
    8:	00000197          	auipc	gp,0x0
    c:	0181a183          	lw	gp,24(gp) # 20 <GpioBase>
 

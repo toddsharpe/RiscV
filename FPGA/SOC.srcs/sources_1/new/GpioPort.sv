@@ -21,7 +21,7 @@
 
 
 module GpioPort(
-    input clk,
+    //input clk,
     input cpu_clk,
     input reset,
     input enable,

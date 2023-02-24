@@ -40,7 +40,7 @@ module SoC(
 
     wire [15:0] gpioData = mem_wdata[15:0];
     GpioPort gpio1(
-        .clk(clk),
+        //.clk(clk),
         .cpu_clk(cpu_clk),
         .reset(reset),
         .enable(isGpio1),

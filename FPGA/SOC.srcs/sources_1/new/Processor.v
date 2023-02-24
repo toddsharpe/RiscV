@@ -102,6 +102,7 @@ module Processor(
     always @(posedge cpu_clk) begin
         if(reset) begin
             state <= FETCH_INSTR;
+            pc <= 32'h0;
         end else begin
             case(state)
                 FETCH_INSTR: begin
@@ -144,7 +145,8 @@ module Processor(
         .probe_in5(mem_wdata),  // input wire [31 : 0] probe_in5
         .probe_in6(mem_wmask),  // input wire [3 : 0] probe_in6
         .probe_in7(regLatch),  // input wire [0 : 0] probe_in7
-        .probe_in8(regIn)  // input wire [31 : 0] probe_in8
+        .probe_in8(regIn),  // input wire [31 : 0] probe_in8
+        .probe_in9(instr)  // input wire [31 : 0] probe_in9
     );
 
 endmodule

@@ -48,7 +48,7 @@
 `timescale 1ns / 1ps
 module processor_vio (
 clk,
-probe_in0,probe_in1,probe_in2,probe_in3,probe_in4,probe_in5,probe_in6,probe_in7,probe_in8
+probe_in0,probe_in1,probe_in2,probe_in3,probe_in4,probe_in5,probe_in6,probe_in7,probe_in8,probe_in9
 
 );
 
@@ -62,6 +62,7 @@ input [31 : 0] probe_in5;
 input [3 : 0] probe_in6;
 input [0 : 0] probe_in7;
 input [31 : 0] probe_in8;
+input [31 : 0] probe_in9;
 
 
 
