@@ -23,7 +23,7 @@
 module Main(
     input clk,
     input btnC,
-    input [4:0] sw,
+    input [6:0] sw,
     input sw15,
     output [3:0] an,
     output [6:0] seg
@@ -43,6 +43,8 @@ module Main(
     wire clk_32hz;
     wire clk_64hz;
     wire clk_128hz;
+    wire clk_256hz;
+    wire clk_512hz;
 
     button_pressed btnC_pressed(
         .clk(clk),
@@ -80,12 +82,26 @@ module Main(
         .clk_div(clk_128hz)
     );
 
-    assign cpu_clk = (sw[4] ? clk_128hz : 
-                        (sw[3] ? clk_64hz : 
-                            (sw[2] ? clk_32hz : 
-                                (sw[1] ? clk_16hz : 
-                                    (sw[0] ? clk_8hz :
-                                        manual_clk))))) & (~halt | reset);
+    clock_divider #(.FREQ(256)) clk_256(
+        .clk(clk),
+        .reset(),
+        .clk_div(clk_256hz)
+    );
+
+    clock_divider #(.FREQ(512)) clk_512(
+        .clk(clk),
+        .reset(),
+        .clk_div(clk_512hz)
+    );
+
+    assign cpu_clk = (sw[6] ? clk_512hz :
+                        (sw[5] ? clk_256hz : 
+                            (sw[4] ? clk_128hz : 
+                                (sw[3] ? clk_64hz : 
+                                    (sw[2] ? clk_32hz : 
+                                        (sw[1] ? clk_16hz : 
+                                            (sw[0] ? clk_8hz :
+                                                manual_clk))))))) & (~halt | reset);
 
     //SoC
     SoC soc(

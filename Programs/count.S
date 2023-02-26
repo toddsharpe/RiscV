@@ -3,7 +3,7 @@
 
 _boot:
     li x1, 0
-    li x2, 512
+    li x2, 4096
 #    li x3, 1024
     lw x3, GpioBase
 loop:
