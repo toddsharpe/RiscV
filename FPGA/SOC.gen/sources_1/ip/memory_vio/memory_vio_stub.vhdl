@@ -1,10 +1,10 @@
 -- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
--- Date        : Thu Feb 23 07:37:37 2023
--- Host        : tsharpe-surface running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub
---               c:/Users/todds/GitHub/toddsharpe/RiscV/FPGA/SOC.gen/sources_1/ip/memory_vio/memory_vio_stub.vhdl
+-- Date        : Sun Feb 19 14:46:03 2023
+-- Host        : tsharpe-5950x running 64-bit major release  (build 9200)
+-- Command     : write_vhdl -force -mode synth_stub -rename_top memory_vio -prefix
+--               memory_vio_ memory_vio_stub.vhdl
 -- Design      : memory_vio
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a35tcpg236-1

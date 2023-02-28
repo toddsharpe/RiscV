@@ -26,7 +26,8 @@ module Main(
     input [6:0] sw,
     input sw15,
     output [3:0] an,
-    output [6:0] seg
+    output [6:0] seg,
+    output [15:0] led
 );
 
     //SOC IO
@@ -34,7 +35,7 @@ module Main(
     wire halt;
     
     //Peripherals
-    wire [15:0] led_out;
+    wire [15:0] displayOut;
 
     //Clocks
     wire manual_clk;
@@ -109,9 +110,10 @@ module Main(
         .cpu_clk(cpu_clk),
         .reset(reset),
         .halt(halt),
-        .led_out(led_out)
+        .displayOut(displayOut),
+        .ledsOut(led)
     );
 
     //LED Peripheral
-    LedSegmentsController segDisplay(.clk(clk), .value(led_out), .an(an), .seg(seg));
+    LedSegmentsController segDisplay(.clk(clk), .value(displayOut), .an(an), .seg(seg));
 endmodule

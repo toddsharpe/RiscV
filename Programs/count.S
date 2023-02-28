@@ -1,15 +1,14 @@
 .align 4
-.text
 
+.text
 _boot:
-    li x1, 0
-    li x2, 4096
-#    li x3, 1024
-    lw x3, GpioBase
+    li t0, 0    # Current count
+    li t1, 4096 # Max count
+    li t2, 1024 # GPIO Base
+
 loop:
-    add x1, x1, 1
-    sw x1, 0(x3)
-    bne x1, x2, loop
+    add t0, t0, 1
+    sw t0, 0(t2) # Send value to display
+    sw t0, 4(t2) # Send value to leds
+    bne t0, t1, loop
     ebreak
-GpioBase:
-    .word 1024

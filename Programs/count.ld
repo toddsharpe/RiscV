@@ -6,8 +6,8 @@ SECTIONS
 {
     everything :
     {
-	. = ALIGN(4);
-	count.o (.text)
+    . = ALIGN(4);
+    ../build/fpga/count.o (.text)
         *(.*)
     } >BRAM
 }

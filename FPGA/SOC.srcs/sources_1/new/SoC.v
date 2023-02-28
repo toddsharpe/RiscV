@@ -25,7 +25,8 @@ module SoC(
     input cpu_clk,
     input reset,
     output halt,
-    output [15:0] led_out
+    output [15:0] displayOut,
+    output [15:0] ledsOut
 );
 
     wire [31:0] mem_addr;
@@ -35,19 +36,30 @@ module SoC(
     wire [3:0]  mem_wmask;
 
     //TODO: Memory controller for memorymapped peripherals (LEDs, switches, etc.)
-    wire isGpio1 = mem_addr == 1024;
-    wire isMemory = mem_addr < 1024;
+    //0-1023: Memory
+    //1024 (int32): LED display
+    //1028 (int32): LEDs
+    wire isLedDisplay = mem_addr == 1024;
+    GpioPort ledDisplayPort(
+        //.clk(clk),
+        .cpu_clk(cpu_clk),
+        .reset(reset),
+        .enable(isLedDisplay),
+        .data_in(mem_wdata[15:0]),
+        .data_out(displayOut)
+    );
 
-    wire [15:0] gpioData = mem_wdata[15:0];
+    wire isLeds = mem_addr == 1028;
     GpioPort gpio1(
         //.clk(clk),
         .cpu_clk(cpu_clk),
         .reset(reset),
-        .enable(isGpio1),
-        .data_in(gpioData),
-        .data_out(led_out)
+        .enable(isLeds),
+        .data_in(mem_wdata[15:0]),
+        .data_out(ledsOut)
     );
 
+    wire isMemory = mem_addr < 1024;
     Memory memory(
         .clk(clk),
         .cpu_clk(cpu_clk),
